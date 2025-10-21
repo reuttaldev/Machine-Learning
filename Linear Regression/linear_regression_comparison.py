@@ -13,7 +13,8 @@ import sklearn.model_selection
 import sklearn.pipeline
 import sklearn.preprocessing
 import sklearn.compose
-
+import warnings
+warnings.filterwarnings("ignore", category=sklearn.exceptions.ConvergenceWarning)
 parser = argparse.ArgumentParser()
 parser.add_argument("--predict", default=None, type=str, help="Path to the dataset to predict")
 parser.add_argument("--model_path", default="rental_competition.model", type=str, help="Model path")
@@ -163,9 +164,9 @@ class MyModel:
         if self.sorted_trained_models == None:
             return
         X_test = self.preprocessor.transform(X_test)
-        # aggregate predictions 
+        # Aggregating predictions 
         predictions = np.zeros(X_test.shape[0])
-        # calculate weights based on the index (1-based)
+        # Calculating  weights based on the index (1-based)
         weights = [0.6,0.25,0.15,0] 
         for weight, model in zip(weights, self.sorted_trained_models):
             predictions+= model.predict(X_test) * weight

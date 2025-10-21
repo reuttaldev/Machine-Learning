@@ -17,32 +17,30 @@ RANDOM_SEED = 42
 
 def main(args: argparse.Namespace) -> tuple[list[float], float, float]:
 
-    # Generate an artificial regression dataset.
+    # Generating an artificial regression dataset.
     X, t = sklearn.datasets.make_regression(n_samples=args.data_size, random_state=RANDOM_SEED)
 
-    # TODO: Add constant feature with value 1 to represent the bias
+    # Addding constant feature with value 1 to represent the bias
     X = np.concatenate((X, np.ones(shape= (X.shape[0],1))),axis = 1)
     X_train, X_test, t_train, t_test = sklearn.model_selection.train_test_split(X, t, test_size=args.test_size, random_state=RANDOM_SEED)
-    # Create a random generator with a given seed.
     generator = np.random.RandomState(RANDOM_SEED)
-    # Generate initial linear regression weights. We need the same amount of weights as we have features in our data, i.e. the number of columns in X_train
+    # Generating initial linear regression weights. We need the same amount of weights as we have features in our data, i.e. the number of columns in X_train
     weights = generator.uniform(size=X_train.shape[1], low=-0.1, high=0.1)
 
     train_rmses, test_rmses = [], []
     # epoch in machine learning refers to one complete pass through the entire training dataset 
     for epoch in range(args.epochs):
-        # random order to process the data points in
         permutation = generator.permutation(X_train.shape[0])
-        # Process the data in the order of `permutation`. For every
+        # Processing the data in the order of `permutation`. For every
         # `args.batch_size` of them, average their gradient, and update the weights.         
         for batch_count in range(0, len(permutation), args.batch_size):
-            # Choose the fitst args.batch_size from premutation, starting from the step we are in now
+            # Choosing fitst args.batch_size from premutation, starting from the step we are in now
             batch_indices = permutation[batch_count : batch_count+args.batch_size]
-            # Get the batch based on the indicies.
+            # Getting the batch based on the indicies.
             X_batch = X_train[batch_indices]
             t_batch = t_train[batch_indices]
 
-            # Find the gradients for this batch. the gradient is the direction of steeperst asend with respect to each of the weights
+            # Finding the gradients for this batch. the gradient is the direction of steeperst asend with respect to each of the weights
             batch_gradient = np.zeros(weights.shape)
             for x_i,t_i in zip(X_batch, t_batch):   
                 # The gradient for the input example $(x_i, t_i)$ is
@@ -59,16 +57,16 @@ def main(args: argparse.Namespace) -> tuple[list[float], float, float]:
                 batch_gradient += loss_gradient+ regularzation
 
             batch_gradient /= args.batch_size
-            #update the weights accordinaly -- the SGD update is weights = weights - args.learning_rate * gradient
+            # Updating the weights accordinaly -- the SGD update is weights = weights - args.learning_rate * gradient
             weights -= args.learning_rate * batch_gradient
 
-        # Append current RMSE on train/test to `train_rmses`/`test_rmses`.
+        # Appendding current RMSE on train/test to `train_rmses`/`test_rmses`.
         train_predictions = X_train @ weights 
         test_predictions = X_test @ weights
         train_rmses.append(sklearn.metrics.root_mean_squared_error(train_predictions,t_train))
         test_rmses.append(sklearn.metrics.root_mean_squared_error(test_predictions,t_test))
 
-    # Compute explicit test data RMSE when fitting for comparison
+    # Computing explicit test data RMSE when fitting for comparison
     model = sklearn.linear_model.LinearRegression()
     model.fit(X_train, t_train)
     explicit_predictions = model.predict(X_test)
