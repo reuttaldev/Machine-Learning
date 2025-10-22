@@ -4,6 +4,9 @@ import sklearn.linear_model
 import sklearn.model_selection
 import sklearn.pipeline
 import sklearn.preprocessing
+import sys
+
+sys.path.append(".")
 from config import RANDOM_SEED
 import warnings
 warnings.filterwarnings("ignore", category=sklearn.exceptions.ConvergenceWarning)

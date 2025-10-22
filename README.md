@@ -189,7 +189,7 @@ In [tf_idf.py](Logistic%20Regression\tf_idf.py) I perform classification of text
 In [perceptron.py](Neural%20Networks\perceptron.py) I implement a simple perceptron algorithm to binary classify (random)data with labels {-1, 1}.  
 
 **Example usage:**  
-`python "Neural Networks\perceptron.py" --data_size=100`
+`python "Neural Networks\perceptron.py" --data_size=100`  
 **Example output:**
 `Learned weights -1.10 3.02 0.00`
 
@@ -223,6 +223,163 @@ The ensemble uses a soft voting classifier to combine the probabilistic outputs 
 **Example output:**  
 `Test accuracy: 0.9836`
 
+# K-nearest neighbors
+In [k_nearest_neighbors.py](k_nearest_neighbors.py) I
+implement k-nearest neighbors algorithm for classifying MNIST, without using the
+`sklearn.neighbors` module or `scipy.spatial`. 
+**Example usage:**  
+`python k_nearest_neighbors.py --k=1 --p=2 --weights=uniform --test_size=500 --train_size=100`  
+**Example output:**  
+`K-nn accuracy for 1 nearest neighbors, L_2 metric, uniform weights: 73.80%`     
+**Example usage:**  
+`python k_nearest_neighbors.py --k=5 --p=2 --weights=uniform --test_size=500 --train_size=1000 --plot`  
+**Example output:**  
+`K-nn accuracy for 5 nearest neighbors, L_2 metric, uniform weights: 88.60%`
+
+![Figure of the 5 nearest neighbors for the last example:](figures\k_nearest_neighbors_figure.png)
+
+# Native Bayes
+
+In [naive_bayes.py](naive_bayes.py), I implement a Naive Bayes classifier from scratch (without using `sklearn.naive_bayes`).  
+The implementation supports:
+- Gaussian Naive Bayes — for continuous features  
+- Multinomial Naive Bayes — for count-based features  
+- Bernoulli Naive Bayes — for binary features  
+
+I use it to classify the scikit-learn Digits dataset which contains 8×8 grayscale images of handwritten digits (10 classes).  
+
+Below I explain the most important theoretical aspects of the algorithm.
+
+## 1. Bayes’ Theorem
+In the Naive Bayes algorithm, we aim to model the conditional probability of the class given the features, $P(C_k \mid X)$, rather than the joint distribution $P(X, C_k)$.  
+Directly modeling $P(X, C_k)$ would require estimating the full joint probability over all feature combinations, which becomes infeasible as the number of features grows.
+
+By Bayes’ theorem, the posterior can be written as
+$$
+P(C_k \mid X) = \frac{P(X \mid C_k)\,P(C_k)}{P(X)} .
+$$
+
+Where:
+- $P(C_k \mid X)$ — posterior probability of class $C_k$ given input $X$  
+- $P(X \mid C_k)$ — likelihood (probability of the data given the class)  
+- $P(C_k)$ — prior (overall probability of the class)  
+- $P(X)$ — evidence (same for all classes)
+
+Since $P(X)$ is a normalization constant independent of $k$, for prediction we only need to estimate $P(C_k)$ and $P(X \mid C_k)$ and choose
+$$
+\hat{y} \;=\; \arg\max_k\, P(C_k)\,P(X \mid C_k).
+$$
+
+The naive conditional independence assumption factorizes the likelihood as
+$$
+P(X \mid C_k) \;=\; \prod_{d=1}^{D} P(x_d \mid C_k).
+$$
+
+To avoid numerical underflow from multiplying many small probabilities, we work in log space:
+$$
+\log P(C_k \mid X)\; \propto\; \log P(C_k)\;+\; \sum_{d=1}^{D} \log P(x_d \mid C_k).
+$$
+
+---
+
+## 2. Gaussian Naive Bayes
+
+In Gaussian Naive Bayes, each feature $x_d$ is modeled by a normal distribution under each class:
+$$
+P(x_d \mid C_k) \;=\; \frac{1}{\sqrt{2\pi\,\sigma_{kd}^2}}\,
+\exp\!\left(-\frac{(x_d-\mu_{kd})^2}{2\,\sigma_{kd}^2}\right).
+$$
+
+### Parameter estimation (Maximum Likelihood Estimation)
+The class-conditional mean and variance are estimated by MLE:
+$$
+\mu_{kd} \;=\; \frac{1}{N_k}\sum_{i:\,y_i=k} x_{id}, 
+\qquad
+\sigma_{kd}^2 \;=\; \frac{1}{N_k}\sum_{i:\,y_i=k} \bigl(x_{id}-\mu_{kd}\bigr)^2 \;+\; \alpha,
+$$
+where:
+- $N_k$ — number of samples in class $k$  
+- $\alpha$ — small smoothing constant to prevent zero variance / overly sharp distributions
+
+## 3. Bernoulli Naive Bayes
+
+Bernoulli Naive Bayes is designed for **binary features** ($x_d \in \{0,1\}$).  
+Each feature represents whether an attribute (e.g. a specific word) is present in a sample.
+
+The term  likelihood P(x_d \mid C_k) can be modeled using a Bernoulli distribution (for a given feature):
+$$
+P(x_d \mid C_k) \;=\; \theta_{kd}^{x_d}\,(1-\theta_{kd})^{1-x_d},
+$$
+where $\theta_{kd}$ is the probability that feature $d$ appears in class $k$.
+
+The simplified logarithm of it is (for all features):
+$$
+\log P(X \mid C_k) \;=\; \sum_{d=1}^{D}\bigl[x_d\log \theta_{kd} + (1-x_d)\log(1-\theta_{kd})\bigr].
+$$
+$\theta_{kd}$ is estimated using **Maximum Likelihood Estimation (MLE)**.  
+By setting the derivative of the log-likelihood with respect to $\theta_{kd}$ to zero and adding an additive smoothing term, the estimation is obtained:
+
+$$
+\theta_{kd} = \frac{\text{count}(x_d, C_k) + \alpha}
+{\sum_j \text{count}(x_j, C_k) + \alpha D}
+$$
+
+where:
+- $\text{count}(x_d, C_k)$ — total count of feature $d$ in samples belonging to class $k$  
+- $D$ — number of features  
+- $\alpha$ — Laplace smoothing constant (prevents zero probabilities)
+
+Since the inputs in the training data used are not binary, I binarize them by setting each feature to 1 if its value is at least 8, and 0 otherwise. This allows continuous features to be used with the Bernoulli Naive Bayes model.
+
+## 4. Multinomial Naive Bayes
+
+Multinomial Naive Bayes is typically used for **discrete count data**, such as word frequencies in text classification.  
+Here, each feature represents the number of times an event (like a word) occurs in a sample.
+
+The likelihood of the data given the class is modeled as a **multinomial distribution**:
+$$
+P(X \mid C_k) \;=\; \frac{(\sum_d x_d)!}{\prod_d x_d!} \prod_{d=1}^{D} \theta_{kd}^{x_d},
+$$
+where $\theta_{kd}$ is the probability of observing feature $d$ in class $k$  
+and $x_d$ represent how many times event $d$ (such as a word) occurs in the sample.
+
+To estimate $\theta_{kd}$, we use **Laplace smoothing** to avoid zero probabilities:
+$$
+\theta_{kd} \;=\; \frac{\text{count}(x_d, C_k) + \alpha}
+{\sum_j \text{count}(x_j, C_k) + \alpha D}.
+$$
+Where $\text{count}(x_j, C_k)$ is the sum of features $ x_d$ for class $C_k$
+
+For prediction, we again use the log form:
+$$
+\log P(C_k \mid X) \;=\; \log P(C_k) \;+\; \sum_{d=1}^{D} x_d \log \theta_{kd}.
+$$
+
+---
+**Example usage:**  
+`python naive_bayes.py --classes=3 --naive_bayes_type=gaussian`  
+**Example output:**  
+`Test accuracy 97.03%, log probability -32540.02`     
+**Example usage:**  
+`python naive_bayes.py --classes=3 --naive_bayes_type=bernoulli`  
+**Example output:**  
+`Test accuracy 95.17%, log probability -5109.49`
+**Example usage:**  
+`python naive_bayes.py --classes=3 --naive_bayes_type=multinomial`  
+**Example output:**  
+`Test accuracy 94.05%, log probability -301387.67`
+
+# Decision tree 
+manually implement construction of a classification decision tree, supporting both
+`gini` and `entropy` criteria, and `max_depth`, `min_to_split` and `max_leaves`
+constraints.
+
+# Random forest
+template, train a random forest, which is a collection of decision trees trained
+with dataset bagging and random feature subsampling.
+
+We recommend using object-oriented programming to implement the decision tree
+classifier;
 # License and Attribution
 This repository includes code templates and instructional material adapted from  
 [ Machine Learning course materials](https://github.com/ufal/npfl129), which are

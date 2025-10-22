@@ -6,10 +6,13 @@ import sklearn.metrics
 import sklearn.model_selection
 import matplotlib.pyplot as plt
 
+import sys
+sys.path.append(".")
+from config import RANDOM_SEED
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--plot", default=False, const=True, nargs="?", type=str, help="Plot the predictions")
 parser.add_argument("--test_size", default=0.5, type=lambda x: int(x) if x.isdigit() else float(x), help="Test size")
-RANDOM_SEED = 13
 
 def main(args: argparse.Namespace) -> tuple[float, float]:
     dataset = sklearn.datasets.load_diabetes()

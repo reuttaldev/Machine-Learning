@@ -15,10 +15,14 @@ import sklearn.preprocessing
 import sklearn.compose
 import warnings
 warnings.filterwarnings("ignore", category=sklearn.exceptions.ConvergenceWarning)
+
+import sys
+sys.path.append(".")
+from config import RANDOM_SEED
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--predict", default=None, type=str, help="Path to the dataset to predict")
 parser.add_argument("--model_path", default="rental_competition.model", type=str, help="Model path")
-RANDOM_SEED = 42
 
 
 class Dataset:

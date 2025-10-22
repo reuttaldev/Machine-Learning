@@ -3,10 +3,14 @@ import numpy as np
 import sklearn.datasets
 import sklearn.model_selection
 
+import sys
+sys.path.append(".")
+from config import RANDOM_SEED
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--test_size", default=0.1, type=lambda x: int(x) if x.isdigit() else float(x), help="Test size")
 
-RANDOM_SEED = 42
+
 def main(args: argparse.Namespace) -> float:
     dataset = sklearn.datasets.load_diabetes()
     X = dataset.data

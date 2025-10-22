@@ -5,6 +5,10 @@ import sklearn.linear_model
 import sklearn.metrics
 import sklearn.model_selection
 
+import sys
+sys.path.append(".")
+from config import RANDOM_SEED
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch_size", default=10, type=int, help="Batch size")
 parser.add_argument("--data_size", default=100, type=int, help="Data size")
@@ -13,7 +17,7 @@ parser.add_argument("--l2", default=0.0, type=float, help="L2 regularization str
 parser.add_argument("--learning_rate", default=0.01, type=float, help="Learning rate")
 parser.add_argument("--plot", default=False, const=True, nargs="?", type=str, help="Plot the predictions")
 parser.add_argument("--test_size", default=0.5, type=lambda x: int(x) if x.isdigit() else float(x), help="Test size")
-RANDOM_SEED = 42
+
 
 def main(args: argparse.Namespace) -> tuple[list[float], float, float]:
 

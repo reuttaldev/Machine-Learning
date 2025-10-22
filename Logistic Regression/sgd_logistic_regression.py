@@ -2,7 +2,10 @@ import argparse
 import numpy as np
 import sklearn.datasets
 import sklearn.model_selection
+import sys
+sys.path.append(".")
 from config import RANDOM_SEED
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--batch_size", default=10, type=int, help="Batch size")
 parser.add_argument("--data_size", default=100, type=int, help="Data size")
