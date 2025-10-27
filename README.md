@@ -47,7 +47,7 @@ $\boldsymbol{w} = (X^\top X)^{-1} X^\top y$
 
 ## Stochastic gradient descent
 In [linear_regression_sgd.py](Linear%20Regression\sgd_linear_regression.py) I approximate the optimal weights using mini-batch stochastic gradient descent (SGD) with L2 regularization.
-The loss function minimized is one half of the mean squared error (error function).  
+The loss function minimized is one-half of the mean squared error (error function).  
 **Example usage:**  
 `python "Linear Regression\sgd_linear_regression.py" --batch_size=10 --epochs=50 --learning_rate=0.01`  
 **Example output:**  
@@ -57,7 +57,7 @@ Learned weights: 3.944 7.517 0.084 30.820 -1.721 -1.129 -1.980 6.294 1.980 -10.5
 ```
 
 ## L2 regression
-In [ridge_regression.py](Linear%20Regression/ridge_regression.py), I evaluate Ridge Regression — a type of linear regression that adds an L2 regularization term to the loss function in order to prevent overfitting and improve model generalization. The model minimizes the following objective:  
+In [ridge_regression.py](Linear%20Regression/ridge_regression.py), I evaluate Ridge Regression — a type of linear regression that adds an L2 regularization term to the loss function to prevent overfitting and improve model generalization. The model minimizes the following objective:  
 
 $J(\mathbf{w}) = \|y - X\mathbf{w}\|^2 + \lambda \|\mathbf{w}\|^2$
 
@@ -71,7 +71,7 @@ It evaluates **500 different λ (lambda)** values, geometrically spaced between 
 ![RMSE vs λ example](figures\l2_linear_regression_figure.png)
 
 ## Grid search
-In [linear_regression_comparison.py](Linear%20Regression/linear_regression_comparison.py) I evaluate multiple linear regression–based models to predict hourly bike rental demand based on data from a bike rental shop.
+In [linear_regression_comparison.py](Linear%20Regression/linear_regression_comparison.py), I evaluated multiple linear regression–based models to predict hourly bike rental demand based on data from a bike rental shop.
 ### Implementation 
 #### 1. **Feature Preprocessing**
 - **Categorical columns:** automatically detected (integer-only columns) and one-hot encoded using `OneHotEncoder(handle_unknown="ignore")`.
@@ -83,7 +83,7 @@ Adds **2nd-order polynomial features** to capture non-linear relationships and f
 
 #### 3. **Model Comparison**
 The following models from sklearn are trained and evaluated using in order to find the one that minimizes the loss function. Cross-validation uses negative RMSE as the scoring metric.  
-Additionally, I used `GridSearchCV` finds the best hyperparameters for each model.
+Additionally, I used `GridSearchCV` to find the best hyperparameters for each model.
 
 | Model | Regularization | Parameters Tuned |
 |--------|----------------|------------------|
@@ -111,14 +111,14 @@ best params: {'alpha': 1.0}
 4. LinearRegression RMSE = 215.5452
 ```
 
-The RMSE for the training data were 64.76.
+The RMSE for the training data was 64.76.
 
 # Logistic regression
 
 ## Stochastic gradient descent
 In [sgd_logistic_regression.py](Logistic%20Regression/sgd_logistic_regression.py), I train a logistic regression model using mini-batch stochastic gradient descent (SGD).  
 The linear combination of inputs is passed through the **sigmoid function** to produce class probabilities between 0 and 1.  
-The model minimizes the average MLE (maximum likelihood estimate), which is the same as minimizing the minus log likelihood (if we assume P follows normal distribution). 
+The model minimizes the average MLE (maximum likelihood estimate), which is the same as minimizing the minus log likelihood (if we assume P follows a normal distribution). 
 **Example usage:**  
 `python "Logistic Regression\sgd_logistic_regression.py" --data_size=95 --test_size=45 --batch_size=5 --epochs=9 --learning_rate=0.5 --plot`  
 **Example output:**  
@@ -220,7 +220,7 @@ In [tf_idf.py](Logistic%20Regression\tf_idf.py) I perform classification of text
 
 # Neural Networks
 ## Perceptron
-In [perceptron.py](Neural%20Networks\perceptron.py) I implement a simple perceptron algorithm to binary classify (random)data with labels {-1, 1}.  
+In [perceptron.py](Neural%20Networks\perceptron.py), I implement a simple perceptron algorithm to binary classify (random)data with labels {-1, 1}.  
 
 **Example usage:**  
 `python "Neural Networks\perceptron.py" --data_size=100`  
@@ -258,8 +258,7 @@ The ensemble uses a soft voting classifier to combine the probabilistic outputs 
 `Test accuracy: 0.9836`
 
 # K-nearest neighbors
-In [k_nearest_neighbors.py](k_nearest_neighbors.py) I
-implement the k-nearest neighbors algorithm for classifying MNIST, without using the
+In [k_nearest_neighbors.py](k_nearest_neighbors.py), I implement the k-nearest neighbors algorithm for classifying MNIST, without using the
 `sklearn.neighbors` module or `scipy.spatial`. 
 **Example usage:**  
 `python k_nearest_neighbors.py --k=1 --p=2 --weights=uniform --test_size=500 --train_size=100`  
@@ -280,9 +279,9 @@ The implementation supports:
 - Multinomial Naive Bayes — for count-based features  
 - Bernoulli Naive Bayes — for binary features  
 
-I use it to classify the scikit-learn Digits dataset which contains 8×8 grayscale images of handwritten digits (10 classes).  
+I use it to classify the scikit-learn Digits dataset, which contains 8×8 grayscale images of handwritten digits (10 classes).  
 
-Below I explain the most important theoretical aspects of the algorithm.
+Below, I explain the most important theoretical aspects of the algorithm.
 
 ## 1. Bayes’ Theorem
 In the Naive Bayes algorithm, we aim to model the conditional probability of the class given the features, $P(C_k \mid X)$, rather than the joint distribution $P(X, C_k)$.  
@@ -338,7 +337,7 @@ where:
 ## 3. Bernoulli Naive Bayes
 
 Bernoulli Naive Bayes is designed for **binary features** ($x_d \in \{0,1\}$).  
-Each feature represents whether an attribute (e.g. a specific word) is present in a sample.
+Each feature represents whether an attribute (e.g., a specific word) is present in a sample.
 
 The term likelihood $P(x_d \mid C_k)$ can be modeled using a Bernoulli distribution (for a given feature):
 $$
@@ -375,7 +374,7 @@ $$
 P(X \mid C_k) \;=\; \frac{(\sum_d x_d)!}{\prod_d x_d!} \prod_{d=1}^{D} \theta_{kd}^{x_d},
 $$
 where $\theta_{kd}$ is the probability of observing feature $d$ in class $k$  
-and $x_d$ represent how many times event $d$ (such as a word) occurs in the sample.
+and $x_d$ represents how many times event $d$ (such as a word) occurs in the sample.
 
 To estimate $\theta_{kd}$, we use **Laplace smoothing** to avoid zero probabilities:
 $$
@@ -438,8 +437,8 @@ Test accuracy: 95.8%
 ## Random forest
 In [random_forest.py](Trees\random_forest.py), I extend the previous script to a random forest -- a collection of decision trees. It is trained with dataset bagging (bootstrap aggregation) and random feature subsampling. During node splitting, a random subset of features is taken into account rather than the entire training input. 
 
-During inference, each test example is passed down all trees in the forest;  
-the final prediction is made by majority voting across trees.
+During inference, each test example is passed down all trees in the forest.  
+The final prediction is made by majority voting across trees.
 
 **Example usage:**  
 `python Trees\random_forest.py --dataset=breast_cancer --trees=10 --bagging --feature_subsampling=0.5 --max_depth=3 `  
