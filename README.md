@@ -48,13 +48,9 @@ $\boldsymbol{w} = (X^\top X)^{-1} X^\top y$
 In [linear_regression_sgd.py](Linear%20Regression/sgd_linear_regression.py), I approximate the optimal weights using mini-batch stochastic gradient descent (SGD) with L2 regularization. The loss function minimized is one-half of the mean squared error (error function). 
 
 For a mini-batch of size \(B\), the **gradient** is:
-$$
-\nabla_{\mathbf{w}} J = -\frac{1}{B} X_B^\top (\mathbf{y}_B - X_B \mathbf{w}) + \lambda \mathbf{w}
-$$  
-The **SGD update rule** is:
-$$
-\mathbf{w} \leftarrow \mathbf{w} - \eta \nabla_{\mathbf{w}} J
-$$
+$$\nabla_{\mathbf{w}} J = -\frac{1}{B} X_B^\top (\mathbf{y}_B - X_B \mathbf{w}) + \lambda \mathbf{w}$$  
+And the SGD update rule:
+$$\mathbf{w} \leftarrow \mathbf{w} - \eta \nabla_{\mathbf{w}} J$$
 
 **Example usage:**  
 `python "Linear Regression\sgd_linear_regression.py" --batch_size=10 --epochs=50 --learning_rate=0.01`  
