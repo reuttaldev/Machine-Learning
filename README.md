@@ -1,7 +1,6 @@
 # Machine Learning Algorithms
 
-This repository contains implementations of core machine learning algorithms, both from scratch and using scikit-learn, written in Python for learning and experimentation.
-
+This repository contains implementations of core machine learning algorithms, both from scratch and using scikit-learn, written in Python.
 ## Table of Contents
 - [Linear regression](#linear-regression)
   - [Analytical solution](#analytical-solution)
