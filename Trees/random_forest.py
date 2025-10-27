@@ -40,12 +40,14 @@ def compute_criterion(target):
     probabilities = counts / len(target)
     return -len(target) * np.sum(probabilities * np.log2(probabilities))
 
+# Splitting the dataset based on a feature threshold
 def split_data(data, target, feature_index, split_value):
 
     left_node_mask = data[:, feature_index] < split_value
     right_node_mask = ~left_node_mask
     return (data[left_node_mask], target[left_node_mask]), (data[right_node_mask], target[right_node_mask])
 
+# Searching for the best feature and threshold that minimizes the criterion
 def split_node(data, target, feature_indices):
     best_split = None
     best_criterion_decrease = -np.inf
@@ -76,6 +78,7 @@ def split_node(data, target, feature_indices):
 
     return best_split
 
+# Build a decision tree recursively 
 def make_node_recursive(data, target, depth, max_depth, subsample_features):
   
     if depth >= max_depth or compute_criterion(target) <= 1e-10:
@@ -149,19 +152,16 @@ def main(args: argparse.Namespace) -> tuple[float, float]:
         predictions = np.array([[predict(tree, sample) for tree in forest] for sample in data])
         return scipy.stats.mode(predictions, axis=1, keepdims=True).mode.flatten()
 
-    # Use the given dataset.
     data, target = getattr(sklearn.datasets, "load_{}".format(args.dataset))(return_X_y=True)
-
     train_data, test_data, train_target, test_target = sklearn.model_selection.train_test_split(
-        data, target, test_size=args.test_size, random_state=args.seed)
-
-    # Create random generators
-    generator_feature_subsampling = np.random.RandomState(args.seed)
+        data, target, test_size=args.test_size, random_state=RANDOM_SEED)
+    
+    generator_feature_subsampling = np.random.RandomState(RANDOM_SEED)
     def subsample_features(number_of_features: int) -> np.ndarray:
         return np.sort(generator_feature_subsampling.choice(
             number_of_features, size=int(args.feature_subsampling * number_of_features), replace=False))
 
-    generator_bootstrapping = np.random.RandomState(args.seed)
+    generator_bootstrapping = np.random.RandomState(RANDOM_SEED)
     def bootstrap_dataset(train_data: np.ndarray) -> np.ndarray:
         return generator_bootstrapping.choice(len(train_data), size=len(train_data), replace=True)
     

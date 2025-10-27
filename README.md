@@ -1,3 +1,38 @@
+# Machine Learning Algorithms
+
+This repository contains implementations of core machine learning algorithms, both from scratch and using scikit-learn, written in Python for learning and experimentation.
+
+## Table of Contents
+- [Linear regression](#linear-regression)
+  - [Analytical solution](#analytical-solution)
+  - [Stochastic gradient descent](#stochastic-gradient-descent)
+  - [L2 regression](#l2-regression)
+  - [Grid search](#grid-search)
+- [Logistic regression](#logistic-regression)
+  - [Stochastic gradient descent](#stochastic-gradient-descent-1)
+  - [Grid search](#grid-search-1)
+  - [Multinomial classification](#multinomial-classification)
+  - [Multi-label classification](#multi-label-classification)
+  - [Tf-Idf](#tf-idf)
+- [Neural Networks](#neural-networks)
+  - [Perceptron](#perceptron)
+  - [Multilayer perceptron](#multilayer-perceptron)
+  - [MNIST solver](#mnist-solver)
+- [K-nearest neighbors](#k-nearest-neighbors)
+- [Naive Bayes](#naive-bayes)
+  - [1. Bayes’ Theorem](#1-bayes-theorem)
+  - [2. Gaussian Naive Bayes](#2-gaussian-naive-bayes)
+  - [3. Bernoulli Naive Bayes](#3-bernoulli-naive-bayes)
+  - [4. Multinomial Naive Bayes](#4-multinomial-naive-bayes)
+- [Trees](#trees)
+  - [Decision Tree](#decision-tree)
+  - [Random forest](#random-forest)
+- [Gradient boosting](#gradient-boosting)
+- [Principal Component Analysis (PCA)](#principal-component-analysis-pca)
+- [K-Means](#k-means)
+- [Model comparison](#model-comparison)
+- [License and Attribution](#license-and-attribution)
+
 # Linear regression
 
 ## Analytical solution
@@ -26,7 +61,7 @@ In [ridge_regression.py](Linear%20Regression/ridge_regression.py), I evaluate Ri
 
 $J(\mathbf{w}) = \|y - X\mathbf{w}\|^2 + \lambda \|\mathbf{w}\|^2$
 
-It evaluates **500 different λ (lambda)** values, geometrically spaced between 0.01 and 10, and return the lambda producing lowest one and the corresponding value.
+It evaluates **500 different λ (lambda)** values, geometrically spaced between 0.01 and 10, and returns the lambda producing the lowest one and the corresponding value.
 
 **Example usage:**  
 `python "Linear Regression\l2_linear_regression.py" --test_size=0.15 --plot`  
@@ -76,7 +111,7 @@ best params: {'alpha': 1.0}
 4. LinearRegression RMSE = 215.5452
 ```
 
-The RMSE for some training data were 64.76.
+The RMSE for the training data were 64.76.
 
 # Logistic regression
 
@@ -129,14 +164,13 @@ Rank:  1 Cross-val: 97.0% log_reg__C: 100   log_reg__solver: sag   poly_features
 
 Test accuracy: 98.11%
 ```
-
 ## Multinomial classification
 
 In [sgd_multinomial_classification.py](Logistic%20Regression/sgd_multinomial_classification.py), I implement mini-batch SGD for multinomial (softmax) logistic regression on the digits dataset from scikit-learn.  
 The model learns to classify handwritten digits by producing a probability distribution over 10 output classes using the softmax function. The loss function is the same as before.
 **Example usage:**  
 `python "Logistic Regression\sgd_multinomial_classification.py" --batch_size=10  --epochs=2 --learning_rate=0.005`  
-**Example output:**  
+**Example output:**   
 ```
 After epoch 1: train loss 0.3130 acc 90.8%, test loss 0.3529 acc 88.7%
 After epoch 2: train loss 0.2134 acc 93.9%, test loss 0.2450 acc 92.5%
@@ -171,6 +205,7 @@ After epoch 1: train F1 micro 56.45% macro 46.71%, test F1 micro 58.25% macro 43
 After epoch 2: train F1 micro 71.46% macro 59.47%, test F1 micro 73.77% macro 60.3%
 ```
 
+
 ## Tf-Idf
 In [tf_idf.py](Logistic%20Regression\tf_idf.py) I perform classification of text documents from the
 [20 Newsgroups dataset](http://qwone.com/~jason/20Newsgroups/). To represent the documents I manually extract feature from the text using  (without using the `sklearn.feature_extraction` module)
@@ -183,7 +218,6 @@ In [tf_idf.py](Logistic%20Regression\tf_idf.py) I perform classification of text
 **Example output:**
 `F-1 score for TF=True, IDF=False: 46.2%`  
 
-
 # Neural Networks
 ## Perceptron
 In [perceptron.py](Neural%20Networks\perceptron.py) I implement a simple perceptron algorithm to binary classify (random)data with labels {-1, 1}.  
@@ -192,7 +226,6 @@ In [perceptron.py](Neural%20Networks\perceptron.py) I implement a simple percept
 `python "Neural Networks\perceptron.py" --data_size=100`  
 **Example output:**
 `Learned weights -1.10 3.02 0.00`
-
 
 ## Multilayer perceptron
 In [mlp_classification.py](Neural%20Networks/mlp_classification.py), I implement **mini-batch stochastic gradient descent (SGD)** for a **multilayer perceptron (MLP)** classifier.  
@@ -214,6 +247,7 @@ After epoch 1: train acc 79.7%, test acc 80.2%
 After epoch 2: train acc 91.9%, test acc 88.3%
 After epoch 3: train acc 92.4%, test acc 90.0%
 ```
+
 ## Mnist solver
 In [mnist.py](Neural%20Networks/mnist.py), I train an ensemble of Multi-Layer Perceptron (MLP) classifiers on the MNIST dataset, which contains 60,000 images of handwritten digits (0–9).  
 The ensemble uses a soft voting classifier to combine the probabilistic outputs of all MLPs, improving overall accuracy and reducing model variance compared to a single network.
@@ -225,7 +259,7 @@ The ensemble uses a soft voting classifier to combine the probabilistic outputs 
 
 # K-nearest neighbors
 In [k_nearest_neighbors.py](k_nearest_neighbors.py) I
-implement k-nearest neighbors algorithm for classifying MNIST, without using the
+implement the k-nearest neighbors algorithm for classifying MNIST, without using the
 `sklearn.neighbors` module or `scipy.spatial`. 
 **Example usage:**  
 `python k_nearest_neighbors.py --k=1 --p=2 --weights=uniform --test_size=500 --train_size=100`  
@@ -238,7 +272,7 @@ implement k-nearest neighbors algorithm for classifying MNIST, without using the
 
 ![Figure of the 5 nearest neighbors for the last example:](figures\k_nearest_neighbors_figure.png)
 
-# Native Bayes
+# Naive Bayes
 
 In [naive_bayes.py](naive_bayes.py), I implement a Naive Bayes classifier from scratch (without using `sklearn.naive_bayes`).  
 The implementation supports:
@@ -306,7 +340,7 @@ where:
 Bernoulli Naive Bayes is designed for **binary features** ($x_d \in \{0,1\}$).  
 Each feature represents whether an attribute (e.g. a specific word) is present in a sample.
 
-The term  likelihood P(x_d \mid C_k) can be modeled using a Bernoulli distribution (for a given feature):
+The term likelihood $P(x_d \mid C_k)$ can be modeled using a Bernoulli distribution (for a given feature):
 $$
 P(x_d \mid C_k) \;=\; \theta_{kd}^{x_d}\,(1-\theta_{kd})^{1-x_d},
 $$
@@ -369,18 +403,145 @@ $$
 **Example output:**  
 `Test accuracy 94.05%, log probability -301387.67`
 
-# Decision tree 
-manually implement construction of a classification decision tree, supporting both
-`gini` and `entropy` criteria, and `max_depth`, `min_to_split` and `max_leaves`
-constraints.
+# Trees
+## Decision Tree
+In [decision_trees.py](Trees\decision_trees.py), I manually implement the construction of a classification decision tree, supporting both the **Gini** and **Entropy** impurity criteria.  
 
-# Random forest
-template, train a random forest, which is a collection of decision trees trained
-with dataset bagging and random feature subsampling.
+Additionally, three conditions control tree growth:
+- maximum tree depth  
+- minimum samples to split (only split nodes with at least this many training examples)  
+- maximum number of leaf nodes  
 
-We recommend using object-oriented programming to implement the decision tree
-classifier;
+Implementation is done using object-oriented programming.
+
+### Inference
+During prediction, each test example is passed down the tree according to the learned branching rules:
+1. Starting from the root, check the feature and threshold at each internal node.  
+2. Move left or right depending on the comparison result.  
+3. When a leaf node is reached, predict based on the training data that reached that leaf.  
+   For classification, the predicted label is the most frequent class among the training samples in that leaf.  
+   For regression, it is the average of all target values in that leaf.  
+
+### Training
+To train a decision tree, start with a single node containing all input examples.  
+At each step, the algorithm evaluates every possible feature–threshold pair.  
+A criterion measures how homogeneous the training examples of a node are under a given split -- the pair that decreases the criterion value the most is chosen. The process continues recursively until a stopping condition is reached.
+
+**Example usage:**  
+`python Trees\decision_tree.py --dataset=breast_cancer --criterion=entropy --max_depth=3`  
+**Example output:**  
+```
+Train accuracy: 98.1%
+Test accuracy: 95.8%
+```
+
+## Random forest
+In [random_forest.py](Trees\random_forest.py), I extend the previous script to a random forest -- a collection of decision trees. It is trained with dataset bagging (bootstrap aggregation) and random feature subsampling. During node splitting, a random subset of features is taken into account rather than the entire training input. 
+
+During inference, each test example is passed down all trees in the forest;  
+the final prediction is made by majority voting across trees.
+
+**Example usage:**  
+`python Trees\random_forest.py --dataset=breast_cancer --trees=10 --bagging --feature_subsampling=0.5 --max_depth=3 `  
+**Example output:**  
+```
+Train accuracy: 98.8%
+Test accuracy: 95.1%
+```
+
+## Gradient boosting
+
+In [gradient_boosting.py](Trees\gradient_boosting.py), I manually implement a Gradient Boosting Decision Tree (GBDT) model from scratch.  
+
+Similarly to Random Forests, gradient boosting builds an ensemble of decision trees.  
+However, instead of training trees independently and voting, gradient boosting trains them sequentially, where each new tree attempts to correct the errors of the ensemble built so far.
+
+### Implementations
+
+At each boosting iteration:
+
+1. Compute the pseudo-residuals, which are the negative gradients of the loss function with respect to the model’s current predictions.  For classification, this is (typically) the gradient of the negative log-likelihood (cross-entropy).
+2. Train a decision tree to predict these residuals.  
+3. Compute each leaf’s optimal weight (using a second-order Taylor approximation):
+
+   $$
+   w_T = -\frac{\sum_i g_i}{\lambda + \sum_i h_i}
+   $$
+
+   where  
+   - $g_i$ — first derivative (gradient) of the loss  
+   - $h_i$ — second derivative (Hessian) of the loss  
+   - $\lambda$ — L2 regularization term
+4. Update the model prediction:
+
+   $$
+   F_t(x) = F_{t-1}(x) + \eta \, w_T
+   $$
+
+   where $\eta$ is the learning rate.
+5. Repeat for a fixed number of boosting rounds (`--trees`).
+
+**Example usage:**  
+`python "Trees\gradient_boosting.py" --dataset=wine --trees=3 --max_depth=1 --learning_rate=0.3`  
+**Example output:**  
+
+```
+Using 1 trees, train accuracy: 95.5%, test accuracy: 91.1%
+Using 2 trees, train accuracy: 95.5%, test accuracy: 86.7%
+Using 3 trees, train accuracy: 97.7%, test accuracy: 91.1% 
+```
+
+
+# Principal Component Analysis (PCA)
+
+In [pca.py](pca.py), I apply PCA for dimensionality reduction followed by Logistic Regression on the MNIST handwritten digits dataset.
+
+PCA projects the 784-dimensional image data onto a smaller subspace while preserving maximum variance, using **power iteration** for ≤10 components or SVD otherwise.  
+The reduced features are then classified using logistic regression to predict digits 0–9.
+
+**Example usage:**  
+`python pca.py --max_iter=5`  
+**Example output:**  
+`Test set accuracy: 90.48%`
+
+# K-Means 
+
+In [kmeans.py](kmeans.py) I implement K-Means clustering with two initializations: 
+- **Random:** selects initial centers uniformly at random from the data.  
+- **K-Means++:** selects centers to be far apart by sampling each new center with probability proportional to its squared distance from the nearest existing one.
+
+On a synthetic 2D dataset (generated via `sklearn.datasets.make_blobs`). The algorithm iterates
+between assigning points to the nearest center and updating centers to the mean of their assigned points.
+
+**Example usage:**  
+`python kmeans.py --clusters=5 --examples=150 --iterations=3 --init=kmeans++ --plot`  
+**Example output:**  
+`Test set accuracy: 90.48%`
+
+# Statistical comparison
+
+In [statistical_comparison.py](statistical_comparison.py), I compare two models trained with different polynomial feature degrees. Two statistical tests are implemented for assessment: 
+
+- **Bootstrap test:**  
+  Randomly resamples the test set (with replacement) to compute 95% confidence intervals and estimate the probability that their performance difference is not statistically significant.
+
+- **Permutation test:**  
+  Randomly mixes the model predictions to simulate the null hypothesis (models are equivalent) and estimates the **p-value** — how often model 2’s accuracy could be reached by chance.
+
+**Example usage:**  
+`python statistical_comparison.py --test_size=0.9 --bootstrap_samples=1000`  
+**Example output:**  
+```
+Confidence intervals of the two models:
+- [90.54% .. 93.26%]
+- [91.59% .. 94.07%]
+The estimated probability that the null hypothesis holds: 0.40%
+```
+**Example usage:**   
+`python statistical_comparison.py --test_size=0.9 --random_samples=10000 --method=permutation`  
+**Example output:**  
+`Permutation test p-value: 0.57%`
+
 # License and Attribution
-This repository includes code templates and instructional material adapted from  
-[ Machine Learning course materials](https://github.com/ufal/npfl129), which are
-licensed for use under the **Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)** license.
+This repository includes code templates (instructions), snippets (for loading datasets and plotting figures), and material adapted from [ Machine Learning course materials](https://github.com/ufal/npfl129), which are
+licensed under the **Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)** license.
