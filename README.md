@@ -45,7 +45,7 @@ $\boldsymbol{w} = (X^\top X)^{-1} X^\top y$
 `52.38`
 
 ## Stochastic gradient descent
-In [linear_regression_sgd.py](Linear%20Regression\sgd_linear_regression.py) I approximate the optimal weights using mini-batch stochastic gradient descent (SGD) with L2 regularization.
+In [linear_regression_sgd.py](Linear%20Regression/sgd_linear_regression.py), I approximate the optimal weights using mini-batch stochastic gradient descent (SGD) with L2 regularization.
 The loss function minimized is one-half of the mean squared error (error function).  
 **Example usage:**  
 `python "Linear Regression\sgd_linear_regression.py" --batch_size=10 --epochs=50 --learning_rate=0.01`  
@@ -56,18 +56,18 @@ Learned weights: 3.944 7.517 0.084 30.820 -1.721 -1.129 -1.980 6.294 1.980 -10.5
 ```
 
 ## L2 regression
-In [ridge_regression.py](Linear%20Regression/ridge_regression.py), I evaluate Ridge Regression — a type of linear regression that adds an L2 regularization term to the loss function to prevent overfitting and improve model generalization. The model minimizes the following objective:  
+In [ridge_regression.py](Linear%20Regression/l2_linear_regression.py), I evaluate Ridge Regression — a type of linear regression that adds an L2 regularization term to the loss function to prevent overfitting and improve model generalization. The model minimizes the following objective:  
 
 $J(\mathbf{w}) = \|y - X\mathbf{w}\|^2 + \lambda \|\mathbf{w}\|^2$
 
-It evaluates **500 different λ (lambda)** values, geometrically spaced between 0.01 and 10, and returns the lambda producing the lowest one and the corresponding value.
+It evaluates **500 different λ (lambda) values**, geometrically spaced between 0.01 and 10, and returns the λ producing the lowest value and the corresponding value.
 
 **Example usage:**  
-`python "Linear Regression\l2_linear_regression.py" --test_size=0.15 --plot`  
+`python "Linear Regression/l2_linear_regression.py" --test_size=0.15 --plot`  
 **Example output:** 
 `0.49 52.11`
 
-![RMSE vs λ example](figures\l2_linear_regression_figure.png)
+![RMSE vs λ example](figures/l2_linear_regression_figure.png)
 
 ## Grid search
 In [linear_regression_comparison.py](Linear%20Regression/linear_regression_comparison.py), I evaluated multiple linear regression–based models to predict hourly bike rental demand based on data from a bike rental shop.
@@ -81,7 +81,7 @@ In [linear_regression_comparison.py](Linear%20Regression/linear_regression_compa
 Adds **2nd-order polynomial features** to capture non-linear relationships and feature interactions.
 
 #### 3. **Model Comparison**
-The following models from sklearn are trained and evaluated using in order to find the one that minimizes the loss function. Cross-validation uses negative RMSE as the scoring metric.  
+The following models from scikit-learn are trained and evaluated to find the one that minimizes the loss function. Cross-validation uses negative RMSE as the scoring metric.  
 Additionally, I used `GridSearchCV` to find the best hyperparameters for each model.
 
 | Model | Regularization | Parameters Tuned |
@@ -97,7 +97,7 @@ Additionally, I used `GridSearchCV` to find the best hyperparameters for each mo
 - The top 3 models are **ensembled** with weighted averaging:
 
 **Example usage:**  
-`python "Linear Regression\linear_regression_comparison.py"`
+`python "Linear Regression/linear_regression_comparison.py"`
 **Example output:**  
 ```
 Training scores
@@ -119,7 +119,7 @@ In [sgd_logistic_regression.py](Logistic%20Regression/sgd_logistic_regression.py
 The linear combination of inputs is passed through the **sigmoid function** to produce class probabilities between 0 and 1.  
 The model minimizes the average MLE (maximum likelihood estimate), which is the same as minimizing the minus log likelihood (if we assume P follows a normal distribution). 
 **Example usage:**  
-`python "Logistic Regression\sgd_logistic_regression.py" --data_size=95 --test_size=45 --batch_size=5 --epochs=9 --learning_rate=0.5 --plot`  
+`python "Logistic Regression/sgd_logistic_regression.py" --data_size=95 --test_size=45 --batch_size=5 --epochs=9 --learning_rate=0.5 --plot`  
 **Example output:**  
 ```
 After epoch 1: train loss 0.2429 acc 96.0%, test loss 0.3187 acc 93.3%
@@ -133,7 +133,7 @@ After epoch 8: train loss 0.1105 acc 96.0%, test loss 0.2187 acc 93.3%
 After epoch 9: train loss 0.1061 acc 96.0%, test loss 0.2163 acc 93.3%
 Learned weights -0.61 3.61 0.12
 ```
-![epoch 9 visualization](figures\sgd_logistic_regression_figure.png)
+![epoch 9 visualization](figures/sgd_logistic_regression_figure.png)
 
 ## Grid search 
 In [grid_search_logistic_reg.py](Logistic%20Regression/grid_search_logistic_reg.py), I perform hyperparameter tuning for logistic regression using grid search, combined with stratified k-fold cross-validation. The model with the best found hyperparameters gets evaluated over the test data.  
@@ -145,7 +145,7 @@ Evaluated hyperparameter combinations:
 - Solver: lbfgs, sag
 
 **Example usage:**  
-`python "Logistic Regression\grid_search_logistic_reg.py" --test_size=0.5`  
+`python "Logistic Regression/grid_search_logistic_reg.py" --test_size=0.5`  
 **Example output:**  
 ```
 Rank: 11 Cross-val: 86.7% log_reg__C: 0.01  log_reg__solver: lbfgs poly_features__degree: 1
@@ -168,7 +168,7 @@ Test accuracy: 98.11%
 In [sgd_multinomial_classification.py](Logistic%20Regression/sgd_multinomial_classification.py), I implement mini-batch SGD for multinomial (softmax) logistic regression on the digits dataset from scikit-learn.  
 The model learns to classify handwritten digits by producing a probability distribution over 10 output classes using the softmax function. The loss function is the same as before.
 **Example usage:**  
-`python "Logistic Regression\sgd_multinomial_classification.py" --batch_size=10  --epochs=2 --learning_rate=0.005`  
+`python "Logistic Regression/sgd_multinomial_classification.py" --batch_size=10  --epochs=2 --learning_rate=0.005`  
 **Example output:**   
 ```
 After epoch 1: train loss 0.3130 acc 90.8%, test loss 0.3529 acc 88.7%
@@ -197,7 +197,7 @@ The model’s performance is evaluated with two metrics:
   This metric treats all classes equally, regardless of frequency, and is useful for assessing performance on underrepresented labels.
 
 **Example usage:**  
-`python "Logistic Regression\sgd_multilabel_classification.py" --batch_size=10 --epochs=2 --classes=5`  
+`python "Logistic Regression/sgd_multilabel_classification.py" --batch_size=10 --epochs=2 --classes=5`  
 **Example output:**  
 ```
 After epoch 1: train F1 micro 56.45% macro 46.71%, test F1 micro 58.25% macro 43.9%
@@ -206,23 +206,23 @@ After epoch 2: train F1 micro 71.46% macro 59.47%, test F1 micro 73.77% macro 60
 
 
 ## Tf-Idf
-In [tf_idf.py](Logistic%20Regression\tf_idf.py) I perform classification of text documents from the
-[20 Newsgroups dataset](http://qwone.com/~jason/20Newsgroups/). To represent the documents I manually extract feature from the text using  (without using the `sklearn.feature_extraction` module)
+In [tf_idf.py](Logistic%20Regression/tf_idf.py) I perform classification of text documents from the
+[20 Newsgroups dataset](http://qwone.com/~jason/20Newsgroups/). To represent the documents, I manually extract features from the text using  (without using the `sklearn.feature_extraction` module)
 **Example usage:**  
-`python "Logistic Regression\tf_idf.py" --train_size=1000 --test_size=500`
+`python "Logistic Regression/tf_idf.py" --train_size=1000 --test_size=500`
 **Example output:**
 `F-1 score for TF=False, IDF=False: 40.3%`  
 **Example usage:**  
-`python "Logistic Regression\tf_idf.py" --train_size=1000 --test_size=500 --tf`
+`python "Logistic Regression/tf_idf.py" --train_size=1000 --test_size=500 --tf`
 **Example output:**
 `F-1 score for TF=True, IDF=False: 46.2%`  
 
 # Neural Networks
 ## Perceptron
-In [perceptron.py](Neural%20Networks\perceptron.py), I implement a simple perceptron algorithm to binary classify (random)data with labels {-1, 1}.  
+In [perceptron.py](Neural%20Networks/perceptron.py), I implement a simple perceptron algorithm to binary classify (random)data with labels {-1, 1}.  
 
 **Example usage:**  
-`python "Neural Networks\perceptron.py" --data_size=100`  
+`python "Neural Networks/perceptron.py" --data_size=100`  
 **Example output:**
 `Learned weights -1.10 3.02 0.00`
 
@@ -239,7 +239,7 @@ During backpropagation, I explicitly compute the derivatives step by step using 
 5. Compute the derivative with respect to `weights[0]` and `biases[0]`.
 
 **Example usage:**  
-`python "Neural Networks\mlp_classification.py" --epochs=3 --batch_size=10 --hidden_layer=20`
+`python "Neural Networks/mlp_classification.py" --epochs=3 --batch_size=10 --hidden_layer=20`
 **Example output:**  
 ```
 After epoch 1: train acc 79.7%, test acc 80.2%
@@ -252,7 +252,7 @@ In [mnist.py](Neural%20Networks/mnist.py), I train an ensemble of Multi-Layer Pe
 The ensemble uses a soft voting classifier to combine the probabilistic outputs of all MLPs, improving overall accuracy and reducing model variance compared to a single network.
 
 **Example usage:**  
-`python "Neural Networks\mnist.py" --predict`
+`python "Neural Networks/mnist.py" --predict`
 **Example output:**  
 `Test accuracy: 0.9836`
 
@@ -268,7 +268,7 @@ In [k_nearest_neighbors.py](k_nearest_neighbors.py), I implement the k-nearest n
 **Example output:**  
 `K-nn accuracy for 5 nearest neighbors, L_2 metric, uniform weights: 88.60%`
 
-![Figure of the 5 nearest neighbors for the last example:](figures\k_nearest_neighbors_figure.png)
+![Figure of the 5 nearest neighbors for the last example:](figures/k_nearest_neighbors_figure.png)
 
 # Naive Bayes
 
@@ -403,7 +403,7 @@ $$
 
 # Trees
 ## Decision Tree
-In [decision_trees.py](Trees\decision_trees.py), I manually implement the construction of a classification decision tree, supporting both the **Gini** and **Entropy** impurity criteria.  
+In [decision_trees.py](Trees/decision_trees.py), I manually implement the construction of a classification decision tree, supporting both the **Gini** and **Entropy** impurity criteria.  
 
 Additionally, three conditions control tree growth:
 - maximum tree depth  
@@ -426,7 +426,7 @@ At each step, the algorithm evaluates every possible feature–threshold pair.
 A criterion measures how homogeneous the training examples of a node are under a given split -- the pair that decreases the criterion value the most is chosen. The process continues recursively until a stopping condition is reached.
 
 **Example usage:**  
-`python Trees\decision_tree.py --dataset=breast_cancer --criterion=entropy --max_depth=3`  
+`python Trees/decision_tree.py --dataset=breast_cancer --criterion=entropy --max_depth=3`  
 **Example output:**  
 ```
 Train accuracy: 98.1%
@@ -434,13 +434,13 @@ Test accuracy: 95.8%
 ```
 
 ## Random forest
-In [random_forest.py](Trees\random_forest.py), I extend the previous script to a random forest -- a collection of decision trees. It is trained with dataset bagging (bootstrap aggregation) and random feature subsampling. During node splitting, a random subset of features is taken into account rather than the entire training input. 
+In [random_forest.py](Trees/random_forest.py), I extend the previous script to a random forest -- a collection of decision trees. It is trained with dataset bagging (bootstrap aggregation) and random feature subsampling. During node splitting, a random subset of features is taken into account rather than the entire training input. 
 
 During inference, each test example is passed down all trees in the forest.  
 The final prediction is made by majority voting across trees.
 
 **Example usage:**  
-`python Trees\random_forest.py --dataset=breast_cancer --trees=10 --bagging --feature_subsampling=0.5 --max_depth=3 `  
+`python Trees/random_forest.py --dataset=breast_cancer --trees=10 --bagging --feature_subsampling=0.5 --max_depth=3 `  
 **Example output:**  
 ```
 Train accuracy: 98.8%
@@ -449,7 +449,7 @@ Test accuracy: 95.1%
 
 ## Gradient boosting
 
-In [gradient_boosting.py](Trees\gradient_boosting.py), I manually implement a Gradient Boosting Decision Tree (GBDT) model from scratch.  
+In [gradient_boosting.py](Trees/gradient_boosting.py), I manually implement a Gradient Boosting Decision Tree (GBDT) model from scratch.  
 
 Similarly to Random Forests, gradient boosting builds an ensemble of decision trees.  
 However, instead of training trees independently and voting, gradient boosting trains them sequentially, where each new tree attempts to correct the errors of the ensemble built so far.
@@ -480,7 +480,7 @@ At each boosting iteration:
 5. Repeat for a fixed number of boosting rounds (`--trees`).
 
 **Example usage:**  
-`python "Trees\gradient_boosting.py" --dataset=wine --trees=3 --max_depth=1 --learning_rate=0.3`  
+`python "Trees/radient_boosting.py" --dataset=wine --trees=3 --max_depth=1 --learning_rate=0.3`  
 **Example output:**  
 
 ```
