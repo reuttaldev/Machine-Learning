@@ -45,8 +45,17 @@ $\boldsymbol{w} = (X^\top X)^{-1} X^\top y$
 `52.38`
 
 ## Stochastic gradient descent
-In [linear_regression_sgd.py](Linear%20Regression/sgd_linear_regression.py), I approximate the optimal weights using mini-batch stochastic gradient descent (SGD) with L2 regularization.
-The loss function minimized is one-half of the mean squared error (error function).  
+In [linear_regression_sgd.py](Linear%20Regression/sgd_linear_regression.py), I approximate the optimal weights using mini-batch stochastic gradient descent (SGD) with L2 regularization. The loss function minimized is one-half of the mean squared error (error function). 
+
+For a mini-batch of size \(B\), the **gradient** is:
+$$
+\nabla_{\mathbf{w}} J = -\frac{1}{B} X_B^\top (\mathbf{y}_B - X_B \mathbf{w}) + \lambda \mathbf{w}
+$$  
+The **SGD update rule** is:
+$$
+\mathbf{w} \leftarrow \mathbf{w} - \eta \nabla_{\mathbf{w}} J
+$$
+
 **Example usage:**  
 `python "Linear Regression\sgd_linear_regression.py" --batch_size=10 --epochs=50 --learning_rate=0.01`  
 **Example output:**  
@@ -60,7 +69,7 @@ In [ridge_regression.py](Linear%20Regression/l2_linear_regression.py), I evaluat
 
 $J(\mathbf{w}) = \|y - X\mathbf{w}\|^2 + \lambda \|\mathbf{w}\|^2$
 
-It evaluates **500 different λ (lambda) values**, geometrically spaced between 0.01 and 10, and returns the λ producing the lowest value and the corresponding value.
+It evaluates 500 different λ (lambda) values, geometrically spaced between 0.01 and 10, and returns the λ producing the lowest value and the corresponding value.
 
 **Example usage:**  
 `python "Linear Regression/l2_linear_regression.py" --test_size=0.15 --plot`  
@@ -70,7 +79,7 @@ It evaluates **500 different λ (lambda) values**, geometrically spaced between 
 ![RMSE vs λ example](figures/l2_linear_regression_figure.png)
 
 ## Grid search
-In [linear_regression_comparison.py](Linear%20Regression/linear_regression_comparison.py), I evaluated multiple linear regression–based models to predict hourly bike rental demand based on data from a bike rental shop.
+In [linear_regression_comparison.py](Linear%20Regression/linear_regression_comparison.py), I evaluated multiple linear regression–based models. They are trained on h data from a bike rental shop.
 ### Implementation 
 #### 1. **Feature Preprocessing**
 - **Categorical columns:** automatically detected (integer-only columns) and one-hot encoded using `OneHotEncoder(handle_unknown="ignore")`.
@@ -115,9 +124,10 @@ The RMSE for the training data was 64.76.
 # Logistic regression
 
 ## Stochastic gradient descent
-In [sgd_logistic_regression.py](Logistic%20Regression/sgd_logistic_regression.py), I train a logistic regression model using mini-batch stochastic gradient descent (SGD).  
+In [sgd_logistic_regression.py](Logistic%20Regression/sgd_logistic_regression.py), I train a logistic regression model using mini-batch stochastic gradient descent (SGD). 
+
 The linear combination of inputs is passed through the **sigmoid function** to produce class probabilities between 0 and 1.  
-The model minimizes the average MLE (maximum likelihood estimate), which is the same as minimizing the minus log likelihood (if we assume P follows a normal distribution). 
+The model minimizes the average MLE (maximum likelihood estimate), which is the same as minimizing the negative log likelihood (if we assume P follows a normal distribution). 
 **Example usage:**  
 `python "Logistic Regression/sgd_logistic_regression.py" --data_size=95 --test_size=45 --batch_size=5 --epochs=9 --learning_rate=0.5 --plot`  
 **Example output:**  
@@ -167,6 +177,7 @@ Test accuracy: 98.11%
 
 In [sgd_multinomial_classification.py](Logistic%20Regression/sgd_multinomial_classification.py), I implement mini-batch SGD for multinomial (softmax) logistic regression on the digits dataset from scikit-learn.  
 The model learns to classify handwritten digits by producing a probability distribution over 10 output classes using the softmax function. The loss function is the same as before.
+
 **Example usage:**  
 `python "Logistic Regression/sgd_multinomial_classification.py" --batch_size=10  --epochs=2 --learning_rate=0.005`  
 **Example output:**   
@@ -187,7 +198,7 @@ Learned weights:
 ```
 
 ## Multi-label classification
-In [sgd_multilabel_classification.py](Logistic%Regression/sgd_multilabel_classification.py) I train a model using mini-batch SGD on randomly generated data for multi-label classification -- where each input sample can belong to any subset of K classes.  
+In [sgd_multilabel_classification.py](Logistic%Regression/sgd_multilabel_classification.py), I train a model using mini-batch SGD on randomly generated data for multi-label classification -- where each input sample can belong to any subset of K classes.  
 Each class is treated as an independent binary prediction problem, using a sigmoid function to estimate the probability that a given sample belongs to that class.  
 
 The model’s performance is evaluated with two metrics:   
@@ -207,7 +218,20 @@ After epoch 2: train F1 micro 71.46% macro 59.47%, test F1 micro 73.77% macro 60
 
 ## Tf-Idf
 In [tf_idf.py](Logistic%20Regression/tf_idf.py) I perform classification of text documents from the
-[20 Newsgroups dataset](http://qwone.com/~jason/20Newsgroups/). To represent the documents, I manually extract features from the text using  (without using the `sklearn.feature_extraction` module)
+[20 Newsgroups dataset](http://qwone.com/~jason/20Newsgroups/).  
+I represent text documents without using `sklearn.feature_extraction`.Instead, I manually compute the term frequency (TF) and inverse document frequency (IDF) features directly from the text.
+
+### Implementation
+For each document:
+- I extract **terms** using the regular expression `\w+` (sequences of alphanumeric characters).  
+- I build a vocabulary of **features** that occur **at least twice** in the training data.
+- Each document is then represented as a vector of length `len(features)`:
+  - If `--tf` is **not** set, I use **binary indicators** (`1` if a term is present, `0` otherwise).
+  - If `--tf` is set, I compute **term frequency** (number of occurrences of a term normalized so that all feature values sum to 1 for that document).
+- If `--idf` is set, I multiply by **inverse document frequency**, computed as:  
+  $\text{IDF}(t) = \log(\text{N}) - \log(\text{df}_t + 1)$  
+  where `N` is the number of training documents and `df_t` is the number of documents containing term `t`.
+
 **Example usage:**  
 `python "Logistic Regression/tf_idf.py" --train_size=1000 --test_size=500`
 **Example output:**
@@ -219,7 +243,28 @@ In [tf_idf.py](Logistic%20Regression/tf_idf.py) I perform classification of text
 
 # Neural Networks
 ## Perceptron
-In [perceptron.py](Neural%20Networks/perceptron.py), I implement a simple perceptron algorithm to binary classify (random)data with labels {-1, 1}.  
+In [perceptron.py](Neural%20Networks/perceptron.py), I implement a simple perceptron algorithm to binary classify (random) data with labels {-1, 1}.  
+
+### Implementation
+$$
+\hat{y} = \operatorname{sign}\left(\mathbf{w}^\top \mathbf{x} + b\right)
+$$
+
+If the current example is misclassified:
+
+$$
+y_i\left(\mathbf{w}^\top \mathbf{x}_i + b\right) \le 0
+$$
+
+The update od weights and bias:
+
+$$
+\mathbf{w} \leftarrow \mathbf{w} + \eta\, y_i\, \mathbf{x}_i,
+\quad
+b \leftarrow b + \eta\, y_i
+$$
+
+where $$\eta > 0$$ is the learning rate.
 
 **Example usage:**  
 `python "Neural Networks/perceptron.py" --data_size=100`  
@@ -230,6 +275,7 @@ In [perceptron.py](Neural%20Networks/perceptron.py), I implement a simple percep
 In [mlp_classification.py](Neural%20Networks/mlp_classification.py), I implement **mini-batch stochastic gradient descent (SGD)** for a **multilayer perceptron (MLP)** classifier.  
 The model is trained on the classic handwritten digits dataset from scikit-learn.
 
+### Implementation
 During backpropagation, I explicitly compute the derivatives step by step using the **chain rule of derivatives**, in the following order:
 
 1. Compute the derivative of the loss with respect to the *inputs* of the softmax layer.  
