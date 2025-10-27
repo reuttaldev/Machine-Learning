@@ -242,25 +242,16 @@ For each document:
 In [perceptron.py](Neural%20Networks/perceptron.py), I implement a simple perceptron algorithm to binary classify (random) data with labels {-1, 1}.  
 
 ### Implementation
-$$
-\hat{y} = \operatorname{sign}\left(\mathbf{w}^\top \mathbf{x} + b\right)
-$$
+$$\hat{y} = \text{sign}(\mathbf{w}^\top \mathbf{x} + b)$$
 
-If the current example is misclassified:
-
-$$
-y_i\left(\mathbf{w}^\top \mathbf{x}_i + b\right) \le 0
-$$
-
-The update od weights and bias:
-
+The update of weights and bias:
 $$
 \mathbf{w} \leftarrow \mathbf{w} + \eta\, y_i\, \mathbf{x}_i,
 \quad
 b \leftarrow b + \eta\, y_i
 $$
 
-where $$\eta > 0$$ is the learning rate.
+where $\eta > 0$ is the learning rate.
 
 **Example usage:**  
 `python "Neural Networks/perceptron.py" --data_size=100`  
@@ -270,15 +261,42 @@ where $$\eta > 0$$ is the learning rate.
 ## Multilayer perceptron
 In [mlp_classification.py](Neural%20Networks/mlp_classification.py), I implement **mini-batch stochastic gradient descent (SGD)** for a **multilayer perceptron (MLP)** classifier.  
 The model is trained on the classic handwritten digits dataset from scikit-learn.
-
+The loss function is negative log-likelihood (NLL).
 ### Implementation
+#### Forward pass
+Hidden layer:
+$$\mathbf{z}_1 = \mathbf{x}\mathbf{W}_1 + \mathbf{b}_1$$
+$$\mathbf{a}_1 = \text{ReLU}(\mathbf{z}_1) = \max(0, \mathbf{z}_1)$$
+Output layer (Softmax):
+$$\mathbf{z}_2 = \mathbf{a}_1\mathbf{W}_2 + \mathbf{b}_2$$
+$$\hat{\mathbf{y}} = \text{softmax}(\mathbf{z}_2) = \frac{e^{\mathbf{z}_2}}{\sum_j e^{\mathbf{z}_{2,j}}}$$
+#### Backpropagation
 During backpropagation, I explicitly compute the derivatives step by step using the **chain rule of derivatives**, in the following order:
 
 1. Compute the derivative of the loss with respect to the *inputs* of the softmax layer.  
+
+   $$
+   \frac{\partial L}{\partial \mathbf{z}_2} = \hat{\mathbf{y}} - \mathbf{y}
+   $$
+
 2. Compute the derivative with respect to `weights[1]` and `biases[1]`.  
-3. Compute the derivative with respect to the hidden layer output.  
-4. Compute the derivative with respect to the hidden layer input.  
+   $$
+   \frac{\partial L}{\partial \mathbf{W}_2} = \mathbf{a}_1^\top (\hat{\mathbf{y}} - \mathbf{y}),
+   \qquad
+   \frac{\partial L}{\partial \mathbf{b}_2} = \sum_i (\hat{\mathbf{y}} - \mathbf{y})
+   $$
+
+3. Compute the derivative with respect to the hidden layer input.  
+   $$
+   \frac{\partial L}{\partial \mathbf{z}_1} = \left[(\hat{\mathbf{y}} - \mathbf{y}) \mathbf{W}_2^\top\right] \odot \mathbf{1}_{\mathbf{z}_1 > 0}
+   $$
+
 5. Compute the derivative with respect to `weights[0]` and `biases[0]`.
+   $$
+   \frac{\partial L}{\partial \mathbf{W}_1} = \mathbf{x}^\top \frac{\partial L}{\partial \mathbf{z}_1},
+   \qquad
+   \frac{\partial L}{\partial \mathbf{b}_1} = \sum_i \frac{\partial L}{\partial \mathbf{z}_1}
+   $$
 
 **Example usage:**  
 `python "Neural Networks/mlp_classification.py" --epochs=3 --batch_size=10 --hidden_layer=20`
@@ -299,8 +317,13 @@ The ensemble uses a soft voting classifier to combine the probabilistic outputs 
 `Test accuracy: 0.9836`
 
 # K-nearest neighbors
-In [k_nearest_neighbors.py](k_nearest_neighbors.py), I implement the k-nearest neighbors algorithm for classifying MNIST, without using the
-`sklearn.neighbors` module or `scipy.spatial`. 
+In [k_nearest_neighbors.py](k_nearest_neighbors.py), I implement the k-nearest neighbors algorithm from scratch to predict MNIST. 
+
+## Implementation
+1. Computing the distance between the test point and every training point.  
+2. Choosing k training samples with the smallest distances (the nearest neighbors).  
+3. Predicting class by **majority voting** among the neighbors’ labels.
+
 **Example usage:**  
 `python k_nearest_neighbors.py --k=1 --p=2 --weights=uniform --test_size=500 --train_size=100`  
 **Example output:**  
@@ -357,7 +380,6 @@ $$
 ---
 
 ## 2. Gaussian Naive Bayes
-
 In Gaussian Naive Bayes, each feature $x_d$ is modeled by a normal distribution under each class:
 $$
 P(x_d \mid C_k) \;=\; \frac{1}{\sqrt{2\pi\,\sigma_{kd}^2}}\,
@@ -376,7 +398,6 @@ where:
 - $\alpha$ — small smoothing constant to prevent zero variance / overly sharp distributions
 
 ## 3. Bernoulli Naive Bayes
-
 Bernoulli Naive Bayes is designed for **binary features** ($x_d \in \{0,1\}$).  
 Each feature represents whether an attribute (e.g., a specific word) is present in a sample.
 
@@ -406,7 +427,6 @@ where:
 Since the inputs in the training data used are not binary, I binarize them by setting each feature to 1 if its value is at least 8, and 0 otherwise. This allows continuous features to be used with the Bernoulli Naive Bayes model.
 
 ## 4. Multinomial Naive Bayes
-
 Multinomial Naive Bayes is typically used for **discrete count data**, such as word frequencies in text classification.  
 Here, each feature represents the number of times an event (like a word) occurs in a sample.
 
@@ -490,14 +510,12 @@ Test accuracy: 95.1%
 ```
 
 ## Gradient boosting
-
 In [gradient_boosting.py](Trees/gradient_boosting.py), I manually implement a Gradient Boosting Decision Tree (GBDT) model from scratch.  
 
 Similarly to Random Forests, gradient boosting builds an ensemble of decision trees.  
 However, instead of training trees independently and voting, gradient boosting trains them sequentially, where each new tree attempts to correct the errors of the ensemble built so far.
 
 ### Implementations
-
 At each boosting iteration:
 
 1. Compute the pseudo-residuals, which are the negative gradients of the loss function with respect to the model’s current predictions.  For classification, this is (typically) the gradient of the negative log-likelihood (cross-entropy).
@@ -531,13 +549,11 @@ Using 2 trees, train accuracy: 95.5%, test accuracy: 86.7%
 Using 3 trees, train accuracy: 97.7%, test accuracy: 91.1% 
 ```
 
-
 # Principal Component Analysis (PCA)
+In [pca.py](pca.py), I implement PCA for dimensionality reduction on the MNIST handwritten digits dataset. PCA projects the 784-dimensional image data onto a smaller subspace while preserving maximum variance.
 
-In [pca.py](pca.py), I apply PCA for dimensionality reduction followed by Logistic Regression on the MNIST handwritten digits dataset.
-
-PCA projects the 784-dimensional image data onto a smaller subspace while preserving maximum variance, using **power iteration** for ≤10 components or SVD otherwise.  
-The reduced features are then classified using logistic regression to predict digits 0–9.
+## Implementation
+The algorithm uses **power iteration** for ≤10 components and SVD otherwise. The reduced features are then classified using logistic regression to predict digits 0–9.
 
 **Example usage:**  
 `python pca.py --max_iter=5`  
@@ -545,13 +561,13 @@ The reduced features are then classified using logistic regression to predict di
 `Test set accuracy: 90.48%`
 
 # K-Means 
+In [kmeans.py](kmeans.py) I implement K-Means clustering with two initializations. It is train on a synthetic 2D dataset (generated via `sklearn.datasets.make_blobs`).
 
-In [kmeans.py](kmeans.py) I implement K-Means clustering with two initializations: 
+## Implementation
 - **Random:** selects initial centers uniformly at random from the data.  
 - **K-Means++:** selects centers to be far apart by sampling each new center with probability proportional to its squared distance from the nearest existing one.
 
-On a synthetic 2D dataset (generated via `sklearn.datasets.make_blobs`). The algorithm iterates
-between assigning points to the nearest center and updating centers to the mean of their assigned points.
+The algorithm iterates between assigning points to the nearest center and updating centers to the mean of their assigned points.
 
 **Example usage:**  
 `python kmeans.py --clusters=5 --examples=150 --iterations=3 --init=kmeans++ --plot`  
@@ -583,5 +599,5 @@ The estimated probability that the null hypothesis holds: 0.40%
 `Permutation test p-value: 0.57%`
 
 # License and Attribution
-This repository includes code templates (instructions), snippets (for loading datasets and plotting figures), and material adapted from [ Machine Learning course materials](https://github.com/ufal/npfl129), which are
+This repository includes code templates (instructions), code snippets (for loading datasets and plotting figures etc.), and material adapted from [Machine Learning course materials](https://github.com/ufal/npfl129), which are
 licensed under the **Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)** license.
